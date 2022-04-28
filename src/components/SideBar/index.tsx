@@ -1,19 +1,19 @@
 import { Box, Stack } from "@chakra-ui/react";
 import { RiContactsLine, RiDashboardLine, RiInputMethodLine, RiMoneyDollarCircleFill } from "react-icons/ri";
 import { NavLink } from "./NavLink";
-import { NavSection } from "./navSection";
+import { NavSection } from "./NavSection";
 
 export function Sidebar() {
     return (
         <Box as="aside" w="64" mr="8">
             <Stack spacing="12" align="flex-start">
                 <NavSection title="GERAL">
-                    <NavLink icon={RiDashboardLine}>Dashboard</NavLink>
-                    <NavLink icon={RiContactsLine}>Usuários</NavLink>
+                    <NavLink icon={RiDashboardLine} href="/dashboard">Dashboard</NavLink>
+                    <NavLink icon={RiContactsLine} href="/users">Usuários</NavLink>
                 </NavSection>
                 <NavSection title="AUTOMAÇÃO">
-                    <NavLink icon={RiInputMethodLine}>Formulário</NavLink>
-                    <NavLink icon={RiMoneyDollarCircleFill}>Preços</NavLink>
+                    <NavLink icon={RiInputMethodLine} href="/forms">Formulário</NavLink>
+                    <NavLink icon={RiMoneyDollarCircleFill} href="/precos">Preços</NavLink>
                 </NavSection>
             </Stack>
         </Box>
