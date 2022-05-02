@@ -3,6 +3,8 @@ import { Input } from "../components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 type SingInFormData = {
   email: string,
   password: string
@@ -19,10 +21,12 @@ export default function SingIn() {
   })
   const { errors } = formState
 
+  const { singIn } = useContext(AuthContext)
+
   const handleSingIn: SubmitHandler<SingInFormData> = async (values) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(values)
+    await singIn(values)
   }
+
 
   return (
     <Flex

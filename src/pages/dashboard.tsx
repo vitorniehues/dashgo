@@ -3,6 +3,7 @@ import { ApexOptions } from "apexcharts";
 import dynamic from "next/dynamic";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/SideBar";
+import { singInService } from "../services/singInService";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false
@@ -47,6 +48,7 @@ const series = [
 ]
 
 export default function DashBoard() {
+
   return (
     <Flex direction="column" h="100vh">
       <Header />
@@ -71,7 +73,6 @@ export default function DashBoard() {
             <Text fontSize="lg" mb="4">Taxa de abertura</Text>
             <Chart options={options} series={series} type="area" height={160} />
           </Box>
-
         </SimpleGrid>
       </Flex>
     </Flex>
