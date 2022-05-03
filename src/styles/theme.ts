@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/react";
+import { CustomThemeTypings, extendTheme } from "@chakra-ui/react";
 
 export const theme = extendTheme({
     colors: {
@@ -13,6 +13,7 @@ export const theme = extendTheme({
             "200": "#B3B5C6",
             "100": "#D1D2DC",
             "50": "#EEEEF2",
+            "20": "#fffff"
         }
     },
     fonts: {

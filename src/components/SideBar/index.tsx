@@ -5,7 +5,7 @@ import { NavSection } from "./NavSection";
 
 export function Sidebar() {
     return (
-        <Box as="aside" w="64" mr="8">
+        <Box as="aside" w="auto" mr="8">
             <Stack spacing="12" align="flex-start">
                 <NavSection title="GERAL">
                     <NavLink icon={RiDashboardLine} href="/dashboard">Dashboard</NavLink>
