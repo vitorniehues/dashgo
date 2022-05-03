@@ -13,7 +13,6 @@ export default function UserList() {
                 <Sidebar />
 
 
-
                 <Box flex="1" borderRadius={0} bg="gray.800" p="8">
                     <Flex mb="8" justify="space-between" align="center">
                         <Heading size="lg" fontWeight="normal" > Usuários</Heading>
