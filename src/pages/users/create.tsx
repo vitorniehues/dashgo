@@ -64,7 +64,7 @@ export default function CreateUser() {
                     <Flex mt="8" justify="flex-end">
                         <HStack spacing="4">
                             <Button colorScheme="whiteAlpha">Cancelar</Button>
-                            <Button type="submit" isLoading={isSubmitting} colorScheme="pink">Salvar</Button>
+                            <Button type="submit" isLoading={isSubmitting} colorScheme="blue">Salvar</Button>
                         </HStack>
                     </Flex>
                 </Box>

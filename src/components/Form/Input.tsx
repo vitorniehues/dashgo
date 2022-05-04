@@ -14,7 +14,7 @@ export const Input = forwardRef<InputProps, 'input'>(({ name, label, error = nul
             <ChakraInput
                 name={name}
                 id={name}
-                focusBorderColor="pink.500"
+                focusBorderColor="blue.500"
                 bgColor="gray.900"
                 variant="filled"
                 _hover={{

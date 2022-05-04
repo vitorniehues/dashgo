@@ -15,7 +15,7 @@ export default function UserList() {
                             as="a"
                             size="sm"
                             fontSize="sm"
-                            colorScheme="pink"
+                            colorScheme="blue"
                             leftIcon={<Icon as={RiAddLine} />}
                         >
                             Criar novo
@@ -27,7 +27,7 @@ export default function UserList() {
                     <Thead>
                         <Tr>
                             <Th px="6" color="gray.300" width="8">
-                                <Checkbox colorScheme="pink" />
+                                <Checkbox colorScheme="blue" />
                             </Th>
                             <Th>Usuário</Th>
                             <Th>Data de Cadastro</Th>
@@ -37,7 +37,7 @@ export default function UserList() {
                     <Tbody>
                         <Tr>
                             <Td px="6">
-                                <Checkbox colorScheme="pink" />
+                                <Checkbox colorScheme="blue" />
                             </Td>
                             <Td>
                                 <Box fontWeight="bold">Morgana Torres</Box>
