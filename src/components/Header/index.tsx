@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Spacer } from "@chakra-ui/react";
 import { Logo } from "./Logo";
 import { NotificationsNav } from "./NotificationsNav";
 import { Profile } from "./Profile";

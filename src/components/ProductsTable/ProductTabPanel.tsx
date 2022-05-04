@@ -15,7 +15,7 @@ export function ProductTabPanel({ children, ...rest }: ProductTablePanelProps) {
                         <Th>
                             Forma de Pagamento
                         </Th>
-                        <Th>
+                        <Th isNumeric>
                             Preço
                         </Th>
                     </Tr>

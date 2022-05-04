@@ -6,7 +6,7 @@ export function Logo() {
             fontSize="3xl"
             fontWeight="bold"
             letterSpacing="tight"
-            w="64"
+            w="32"
         >
             dashgo
             <Text as="span" ml="1" color="blue.500">.</Text>

@@ -1,7 +1,7 @@
 import { Tr, Td } from "@chakra-ui/react";
 
 interface ProductTabPanelItemProps {
-    description: string,
+    description?: string,
     price: number,
 }
 
@@ -9,9 +9,9 @@ export function ProductTabPanelItem({ description, price }: ProductTabPanelItemP
     return (
         <Tr>
             <Td>
-                {description}
+                {description ? description : "Todas as formas de pagamento"}
             </Td>
-            <Td>
+            <Td isNumeric>
                 {price.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2, style: 'currency', currency: 'BRL'
                 })}
