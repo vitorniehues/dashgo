@@ -78,7 +78,7 @@ function CustomModal() {
         size="lg"
       >
         <ModalOverlay />
-        <ModalContent bg="gray.700" action="#" onSubmit={handleSubmit} as="form">
+        <ModalContent bg="gray.700" onSubmit={handleSubmit} as="form">
           <ModalHeader>
             Solicitação de Revisão de Preços
           </ModalHeader>

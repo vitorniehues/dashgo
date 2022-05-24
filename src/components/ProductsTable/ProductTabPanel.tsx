@@ -23,11 +23,6 @@ export function ProductTabPanel({ children, ...rest }: ProductTablePanelProps) {
         <Tbody>
           {children}
         </Tbody>
-        <Tfoot >
-          <Box mt="6">
-            <Text fontSize="xs" fontWeight="normal" >Sujeito a alteração sem aviso prévio.</Text>
-          </Box>
-        </Tfoot>
       </Table>
     </TabPanel>
   )
