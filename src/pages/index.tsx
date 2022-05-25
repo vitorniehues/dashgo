@@ -1,10 +1,14 @@
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import { Input } from "../components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
+import { ErrorAlert } from "../components/Alert/ErrorAlert";
+import { AxiosError } from "axios";
+import { parseCookies } from "nookies";
+import Router from "next/router";
 type SingInFormData = {
   email: string,
   password: string
@@ -23,9 +27,19 @@ export default function SingIn() {
 
   const { singIn } = useContext(AuthContext)
 
+
+  const { isOpen: isVisible, onClose, onOpen } = useDisclosure()
+  let title = 'Erro'
+
   const handleSingIn: SubmitHandler<SingInFormData> = async (values) => {
     await singIn(values)
+    //TODO Verificar erro retornado e chamar onOpen para abrir ErrorAlert
   }
+
+  useEffect(() => {
+    const { 'app.presidente.token': token } = parseCookies()
+    if (token) Router.push('/dashboard')
+  }, [])
 
 
   return (
@@ -67,13 +81,15 @@ export default function SingIn() {
 
         <Button
           type="submit"
-          mt={6}
+          mt="6"
           colorScheme="blue"
           size="lg"
           isLoading={formState.isSubmitting}
         >
           Entrar
         </Button>
+
+        <ErrorAlert my="6" status="error" title={title} isVisible={isVisible} />
       </Flex>
     </Flex>
   )

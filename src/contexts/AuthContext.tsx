@@ -1,8 +1,9 @@
 import Router from "next/router";
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { authService } from "../services/authService";
-import { setCookie, parseCookies } from "nookies";
+import { setCookie, parseCookies, destroyCookie } from "nookies";
 import ms from "ms";
+import { sigService } from "../services/sigService";
 
 interface SingInCredentials {
   email: string;
@@ -41,7 +42,15 @@ interface IResponse {
 
 export const AuthContext = createContext({} as AuthContextData)
 
+export function singOut() {
+  destroyCookie(undefined, 'app.presidente.token')
+  destroyCookie(undefined, 'app.presidente.refresh-token')
+
+  Router.push('/')
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
+  //TODO atualizar usuario a cada atualizacao do refreshtoken
   const [user, setUser] = useState<User>()
   const isAuthenticated = !!user
 
@@ -49,13 +58,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { 'app.presidente.token': token } = parseCookies()
 
     if (token) {
-      authService.get<IResponse>('/usuario').then(response => {
-        setUser(response.data.userInfo)
-      })
+      authService.get<IResponse>('/usuario')
+        .then(response => {
+          setUser(response.data.userInfo)
+        })
     }
   }, [])
 
   async function singIn({ email, password }: SingInCredentials) {
+
     try {
       const response = await authService.post<IResponse>('login', {
         email,
@@ -69,22 +80,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       //TODO: Set Cookies with HTTP-Only from response header
 
       setCookie(undefined, 'app.presidente.token', token, {
-        expires: new Date(Date.now() + ms('30d')),
+        expires: new Date(Date.now() + ms('1d')),
         path: '/'
       })
 
       setCookie(undefined, 'app.presidente.refresh-token', refreshToken, {
-        expires: new Date(Date.now() + ms('30d')), //30 Dias
+        expires: new Date(Date.now() + ms('1d')), //30 Dias
         path: '/'
       })
 
       authService.defaults.headers['Authorization'] = `Bearer ${token}`
+      sigService.defaults.headers['Authorization'] = `Bearer ${token}`
+
 
       Router.push('/dashboard')
-    } catch (error) {
-      console.error(error)
-    }
 
+    } catch (error) {
+      console.error(error.response.data.message)
+    }
   }
   return (
     <AuthContext.Provider value={{ singIn, user, isAuthenticated }}>

@@ -1,6 +1,7 @@
-import { Flex, Icon, Input, List, ListItem, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spacer, Text, useDisclosure } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Flex, Icon, Input, List, ListItem, ListItemProps, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Spacer, Text, useDisclosure } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { RiSearchLine } from "react-icons/ri";
+import { consultaPessoasAutorizadas } from "../../services/sigService";
 
 interface CustomListItemProps {
   id: number,
@@ -11,15 +12,10 @@ export function SearchBox() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [name, setName] = useState('Presidente Combustíveis e Derivados de Petróleo Ltda')
 
-  const constList = [
-    { id: 1, title: "Comercial de Combustíveis Presidente Ltda" },
-    { id: 2, title: "Combustíveis Presidente Ltda" },
-    { id: 3, title: "Presidente Combustíveis e Derivados de Petróleo Ltda" },
-    { id: 4, title: "Posto Presidente" },
-  ]
-  const [list, setList] = useState<CustomListItemProps[]>(constList)
+  const [list, setList] = useState<CustomListItemProps[]>()
+  let constList: CustomListItemProps[]
 
-  function CustomListItem({ id, title }: CustomListItemProps) {
+  function CustomListItem({ id, title, ...rest }: CustomListItemProps) {
     return (
       <ListItem
         as="button"
@@ -30,6 +26,7 @@ export function SearchBox() {
         textAlign="start"
         _hover={{ bg: "gray.500" }}
         onClick={() => handleListOnClick({ id, title })}
+        {...rest}
       >
         {title}
       </ListItem>
@@ -41,7 +38,11 @@ export function SearchBox() {
     onClose()
   }
 
-  function handleInputOnChage(value: string): void {
+  function handleOpenModal() {
+    onOpen()
+  }
+
+  function handleInputOnChage(value: string) {
     const newList = constList.filter((e) =>
       e.title
         .toLowerCase()
@@ -50,10 +51,15 @@ export function SearchBox() {
     setList(newList)
   }
 
-  function handleOpenModal(): void {
-    setList(constList)
-    onOpen()
-  }
+  useEffect(() => {
+    async function featchData() {
+      const res = await consultaPessoasAutorizadas()
+      constList = res
+      setList([res[0]])
+      console.log(list)
+    }
+
+  }, [list])
 
   return (
     <Flex
@@ -99,14 +105,12 @@ export function SearchBox() {
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody pt="0" pb="4">
+
             <List borderTop="gray.50" borderTopWidth="thin" pt="4" spacing="2">
               {
-                list.map(({ id, title }) => {
-                  return (<CustomListItem key={id} id={id} title={title} />)
-                })
+                //list.map(e => (<CustomListItem key={e.id} id={e.id} title={e.title} />))
               }
             </List>
-
           </ModalBody>
         </ModalContent>
       </Modal>
