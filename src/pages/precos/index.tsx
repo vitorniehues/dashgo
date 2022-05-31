@@ -1,48 +1,61 @@
-import { Box, Button, Flex, Heading, Icon, TabList, TabPanels, Tabs, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure, Checkbox, SimpleGrid, Text, VStack, ModalFooter, CheckboxGroup, FormControl } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Icon, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure, Checkbox, SimpleGrid, Text, ModalFooter, CheckboxGroup, Spinner } from "@chakra-ui/react";
 import { BasePage } from "../../components/BasePage";
-import { ProductTabPanel } from "../../components/ProductsTable/ProductTabPanel";
-import { ProductTab } from "../../components/ProductsTable/ProductTab";
-import { ProductTabPanelItem } from "../../components/ProductsTable/ProductTabPanelItem";
 import { RiEditBoxFill, RiSendPlaneFill } from "react-icons/ri";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ProductRadioCardGroup } from "../../components/ProductRadioCard";
+import TabelaPrecosProdutos from "../../components/TabelaPrecosProduto";
+import { useQueryPrecosProduto } from "../../hooks/servicesHooks/useQueryPrecosProduto";
+import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 
 export default function ProductsList() {
+  const [idProduto, setIdProduto] = useState<number>(1000)
+  const { idPessoaOperacao } = useAuthContext()
+
+  const { isFetching, isLoading, refetch } = useQueryPrecosProduto({ idProduto })
+
+  useEffect(() => {
+    refetch()
+  }, [idPessoaOperacao])
+
+  function handleRadioOnChange(value: string) {
+    setIdProduto(parseInt(value))
+  }
+
+
+  //TODO retirar produtos do bando de dados
+
+  const produtos = [
+    {
+      idProduto: 1000,
+      nome: 'Gasolina Comum',
+    },
+    {
+      idProduto: 1001,
+      nome: 'Gasolina Aditivada',
+    },
+    {
+      idProduto: 1003,
+      nome: 'Diesel S500',
+    },
+    {
+      idProduto: 1005,
+      nome: 'Diesel S10',
+    },
+  ]
+
   return (
     <BasePage>
       <Box flex="1" bg="gray.800" p="8">
         <Flex mb="8" justify="space-between" align="center">
-          <Heading size="lg" fontWeight="normal" >Produtos</Heading>
+          <Heading size="lg" fontWeight="normal" >Produtos
+            {!isLoading && isFetching && <Spinner ml="4" />}
+          </Heading>
           <CustomModal />
         </Flex>
-        <Tabs variant="solid-rounded" size="md" isFitted>
-          <TabList>
-            <ProductTab>Gasolina Comum</ProductTab>
-            <ProductTab>Gasolina Aditivada</ProductTab>
-            <ProductTab>Diesel S500</ProductTab>
-            <ProductTab>Diesel S10</ProductTab>
-          </TabList>
-          <TabPanels>
-            <ProductTabPanel >
-              <ProductTabPanelItem description="Dinheiro" price={5.50} />
-              <ProductTabPanelItem description="TEF Crédito" price={5.55} />
-              <ProductTabPanelItem description="Nota a Cobrar" price={5.60} />
-            </ProductTabPanel>
-            <ProductTabPanel >
-              <ProductTabPanelItem description="Dinheiro" price={5.51} />
-              <ProductTabPanelItem description="TEF Frota" price={5.56} />
-              <ProductTabPanelItem description="Pgto com crédito de antecipação" price={5.61} />
-            </ProductTabPanel>
-            <ProductTabPanel >
-              <ProductTabPanelItem description="" price={4.50} />
-            </ProductTabPanel>
-            <ProductTabPanel >
-              <ProductTabPanelItem description="Dinheiro" price={4.60} />
-              <ProductTabPanelItem description="TEF Débito" price={4.65} />
-              <ProductTabPanelItem description="Cheque pré-datato (30 dias)" price={4.70} />
-            </ProductTabPanel>
-          </TabPanels>
-        </Tabs>
-        <Text fontSize="xs" fontWeight="normal" >Sujeito a alteração sem aviso prévio.</Text>
+        <Flex>
+          <ProductRadioCardGroup produtos={produtos} onChange={handleRadioOnChange} />
+        </Flex>
+        <TabelaPrecosProdutos idProduto={idProduto} />
       </Box>
     </BasePage >
   )
@@ -52,7 +65,7 @@ function CustomModal() {
   const { isOpen, onClose, onOpen } = useDisclosure()
   const [isSending, setIsSending] = useState(false)
 
-  async function handleSubmit(values) {
+  async function handleSubmit(_values) {
     setIsSending(true)
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setIsSending(false)

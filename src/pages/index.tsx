@@ -3,10 +3,9 @@ import { Input } from "../components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useContext, useEffect } from "react";
-import { AuthContext } from "../contexts/AuthContext";
+import { useEffect } from "react";
+import { useAuthContext } from "../hooks/contextHooks/useAuthContext";
 import { ErrorAlert } from "../components/Alert/ErrorAlert";
-import { AxiosError } from "axios";
 import { parseCookies } from "nookies";
 import Router from "next/router";
 type SingInFormData = {
@@ -25,10 +24,10 @@ export default function SingIn() {
   })
   const { errors } = formState
 
-  const { singIn } = useContext(AuthContext)
+  const { singIn } = useAuthContext()
 
 
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure()
+  const { isOpen: isVisible } = useDisclosure()
   let title = 'Erro'
 
   const handleSingIn: SubmitHandler<SingInFormData> = async (values) => {

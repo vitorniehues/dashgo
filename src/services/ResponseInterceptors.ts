@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import ms from "ms";
 import { parseCookies, setCookie } from "nookies";
-import { singOut } from "../contexts/AuthContext";
+import { singOut } from "../hooks/contextHooks/useAuthContext";
 import { authService } from "./authService";
 import { sigService } from "./sigService";
 
@@ -12,13 +12,14 @@ interface IErrorResponse {
     message: string,
   }
 }
-
 class ResposeInterceptors {
 
   private failedRequestsQueue = []
   private isRefreshing = false
 
   handleRefreshToken(error: AxiosError) {
+    if (error.code !== "ERR_BAD_REQUEST") return Promise.reject(error)
+
     const { status, data } = error.response as IErrorResponse
 
     if (status === 401) {
