@@ -5,7 +5,7 @@ interface ProductTablePanelProps {
   children: ReactNode
 }
 
-export function ProductTabPanel({ children }: ProductTablePanelProps) {
+export function ProductPriceTableHeader({ children }: ProductTablePanelProps) {
   return (
     <Table>
       <Thead>

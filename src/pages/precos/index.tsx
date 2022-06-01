@@ -1,21 +1,15 @@
 import { Box, Button, Flex, Heading, Icon, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useDisclosure, Checkbox, SimpleGrid, Text, ModalFooter, CheckboxGroup, Spinner } from "@chakra-ui/react";
 import { BasePage } from "../../components/BasePage";
 import { RiEditBoxFill, RiSendPlaneFill } from "react-icons/ri";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ProductRadioCardGroup } from "../../components/ProductRadioCard";
-import TabelaPrecosProdutos from "../../components/TabelaPrecosProduto";
+import { ProductPricesTable } from "../../components/ProductPriceTable";
 import { useQueryPrecosProduto } from "../../hooks/servicesHooks/useQueryPrecosProduto";
-import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 
 export default function ProductsList() {
   const [idProduto, setIdProduto] = useState<number>(1000)
-  const { idPessoaOperacao } = useAuthContext()
 
-  const { isFetching, isLoading, refetch } = useQueryPrecosProduto({ idProduto })
-
-  useEffect(() => {
-    refetch()
-  }, [idPessoaOperacao])
+  const { isFetching, isLoading } = useQueryPrecosProduto({ idProduto })
 
   function handleRadioOnChange(value: string) {
     setIdProduto(parseInt(value))
@@ -55,7 +49,7 @@ export default function ProductsList() {
         <Flex>
           <ProductRadioCardGroup produtos={produtos} onChange={handleRadioOnChange} />
         </Flex>
-        <TabelaPrecosProdutos idProduto={idProduto} />
+        <ProductPricesTable idProduto={idProduto} />
       </Box>
     </BasePage >
   )

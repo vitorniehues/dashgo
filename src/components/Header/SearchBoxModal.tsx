@@ -1,9 +1,8 @@
 
-import { Input, List, ListItem, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, ModalProps, Skeleton, Stack, Text } from "@chakra-ui/react"
-import { useQuery } from "react-query"
+import { Flex, Input, List, ListItem, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, ModalProps, Skeleton, Spinner, Stack, Text } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 import { useQueryPessoasAutorizadas } from "../../hooks/servicesHooks/useQueryPessoasAutorizadas";
-import { useQueryPrecosProduto } from "../../hooks/servicesHooks/useQueryPrecosProduto";
 import { useDebounce } from "../../hooks/useDebounce";
 
 
@@ -20,33 +19,27 @@ interface IPessoa {
 export function SearchBoxModal({ isOpen, onClose }: SearchBoxModalProps) {
 
   const { setIdPessoaOperacao } = useAuthContext()
+  const { isSuccess, isError, data: pessoasAutorizadas } = useQueryPessoasAutorizadas()
+  const [filter, setFilter] = useState('')
 
-  //TODO talvez tenha que usar na funcao principal
-  //const debouncedFilter = useDebounce(filter, 500);
+  useEffect(() => {
+    setFilter('')
+  }, [isOpen])
 
-  const { isLoading, isError, data: pessoasAutorizadas, error } = useQueryPessoasAutorizadas()
+  function handleItemListOnClick(id: number) {
+    setIdPessoaOperacao(id)
+    onClose()
+  }
 
-  if (isLoading) {
+  function loading() {
     return (
-      <Stack spacing={4} borderTop="gray.50" borderTopWidth="thin" pt="4">
-        <Skeleton isLoaded={!isLoading}>Texto</Skeleton>
-        <Skeleton isLoaded={!isLoading}>Texto</Skeleton>
-        <Skeleton isLoaded={!isLoading}>Texto</Skeleton>
-        <Skeleton isLoaded={!isLoading}>Texto</Skeleton>
-      </Stack>
+      <Flex py="16" borderTop="gray.50" justifyContent="center" borderTopWidth="thin">
+        <Spinner size="lg" />
+      </Flex>
     )
   }
 
-  if (isError) {
-    console.log('Erro ao carregar lista de pessoas autorizadas: ', error)
-    return (
-      <Text>
-        Erro ao carregar lista de pessoas autorizadas.
-      </Text>
-    )
-  }
-
-  function CustomListItem({ id, nome: title, ...rest }: IPessoa) {
+  function CustomListItem({ id, nome, ...rest }: IPessoa) {
     return (
       <ListItem
         as="button"
@@ -59,14 +52,9 @@ export function SearchBoxModal({ isOpen, onClose }: SearchBoxModalProps) {
         onClick={() => handleItemListOnClick(id)}
         {...rest}
       >
-        {title}
+        {nome}
       </ListItem>
     )
-  }
-
-  function handleItemListOnClick(id: number) {
-    setIdPessoaOperacao(id)
-    onClose()
   }
 
   return (
@@ -86,16 +74,32 @@ export function SearchBoxModal({ isOpen, onClose }: SearchBoxModalProps) {
             mr="2"
             placeholder="Digite para buscar"
             _placeholder={{ color: "gray.400" }}
-          //onChange={(e) => handleInputOnChage(e.target.value)}
+            onChange={(e) => setFilter(e.target.value)}
           />
           <ModalCloseButton />
         </ModalHeader>
         <ModalBody pt="0" pb="4">
-          <List borderTop="gray.50" borderTopWidth="thin" pt="4" spacing="2">
-            {
-              pessoasAutorizadas.map(e => (<CustomListItem key={e.id} id={e.id} nome={e.nome} />))
-            }
-          </List>
+          {
+            isSuccess ? (
+              <List borderTop="gray.50" borderTopWidth="thin" pt="4" spacing="2">
+                {
+                  pessoasAutorizadas
+                    .filter((pessoa) =>
+                      pessoa.nome
+                        .toLowerCase()
+                        .includes(filter.toLowerCase())
+                    )
+                    .map(e => (<CustomListItem key={e.id} id={e.id} nome={e.nome} />))
+                }
+              </List>
+            ) : isError ? (
+              <Text>
+                Erro ao carregar lista de pessoas autorizadas.
+              </Text>
+            ) : (
+              loading()
+            )
+          }
         </ModalBody>
       </ModalContent>
     </Modal>

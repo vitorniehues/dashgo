@@ -4,6 +4,7 @@ import { authService } from "../../services/authService";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 import ms from "ms";
 import { sigService } from "../../services/sigService";
+import { QueryClientProvider, useQueryClient } from "react-query";
 
 interface SingInCredentials {
   email: string;
@@ -42,16 +43,16 @@ export function singOut() {
   destroyCookie(undefined, 'app.presidente.token')
   destroyCookie(undefined, 'app.presidente.refresh-token')
 
+  //TODO apagar cache de dados
+
   Router.push('/')
 }
 
 export function AuthContextProvider({ children }: AuthProviderProps) {
   //TODO atualizar usuario a cada atualizacao do refreshtoken ? talvez nao seja necessario
-  //TODO exportar idPessoaOperacao para ser usado e modificado por outros componentes
   const [user, setUser] = useState<User>()
   const [idPessoaOperacao, setIdPessoaOperacao] = useState<number>()
   const isAuthenticated = !!user
-
 
   useEffect(() => {
     const { 'app.presidente.token': token } = parseCookies()
@@ -62,22 +63,10 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
           const userResponse = response.data
 
           setUser(userResponse)
+          setIdPessoaOperacao(userResponse.pessoasAutorizadas[0])
         })
     }
   }, [])
-
-  //TODO rever esse codigo.
-  useEffect(() => {
-    if (!user) return
-    if (user.role === 'USUARIO' && user.pessoasAutorizadas.length > 0) {
-      setIdPessoaOperacao(user.pessoasAutorizadas[0])
-    }
-    else {
-      throw new Error("Erro dados do usuário. Sem pessoa autorizada.");
-    }
-  }, [user])
-
-
 
   async function singIn({ email, password }: SingInCredentials) {
 
@@ -88,7 +77,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
       })
 
       setUser(response.data.userInfo)
-
+      setIdPessoaOperacao(response.data.userInfo.pessoasAutorizadas[0])
 
       const { token, refreshToken } = response.data
 

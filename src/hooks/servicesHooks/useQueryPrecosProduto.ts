@@ -17,14 +17,15 @@ interface IUseQueryPrecoProdutosParms {
 
 export function useQueryPrecosProduto({ idProduto }: IUseQueryPrecoProdutosParms) {
   const { idPessoaOperacao } = useAuthContext()
-  //TODO verificar quanto idPessoa e nulo
-  return useQuery(['precosProduto', idProduto], async () => {
+
+  return useQuery(['precosProduto:', idProduto, 'pessoa:', idPessoaOperacao], async () => {
     const url = `/pessoa/${idPessoaOperacao}/produto/${idProduto}/regrasvendas`
 
     const res = await sigService.get(url)
     return res.data as PrecoProduto[]
   }, {
     refetchOnWindowFocus: false,
-    staleTime: ms('10s')
+    staleTime: ms('10s'),
+    enabled: !!idPessoaOperacao
   })
 }

@@ -1,3 +1,4 @@
+import ms from "ms"
 import { useQuery } from "react-query"
 import { sigService } from "../../services/sigService"
 
@@ -18,5 +19,8 @@ async function getPessoasAutorizadas(): Promise<Pessoa[]> {
 
 
 export function useQueryPessoasAutorizadas() {
-  return useQuery(['pessoasAutorizadas'], getPessoasAutorizadas)
+  return useQuery(['pessoasAutorizadas'], getPessoasAutorizadas, {
+    refetchOnWindowFocus: false,
+    staleTime: ms('10s')
+  })
 }

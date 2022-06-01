@@ -15,20 +15,11 @@ export function SearchBox() {
 
   const { isSuccess, data: pessoasAutorizadas } = useQueryPessoasAutorizadas()
 
-  // function handleInputOnChage(value: string) {
-  //   const newList = constList.filter((e) =>
-  //     e.nome
-  //       .toLowerCase()
-  //       .includes(value.toLowerCase())
-  //   )
-  //   setList(newList)
-  // }
-
-  console.log('idPessoa: ', idPessoaOperacao)
+  //TODO verificar o pq o nome da pessoa e recarregado na troca de pagina
 
   return (
     <Flex
-      as="label"
+      as="button"
       flex="1"
       py="4"
       px="8"
@@ -41,9 +32,8 @@ export function SearchBox() {
       bg="gray.800"
       borderRadius="full"
       onClick={onOpen}
-      cursor="pointer"
     >
-      <Text>
+      <Text textAlign="left">
         {
           isSuccess && idPessoaOperacao ? (
             pessoasAutorizadas
@@ -51,7 +41,8 @@ export function SearchBox() {
               .nome
           ) : (
             'Carregando...'
-          )}
+          )
+        }
       </Text>
       <Spacer />
 
