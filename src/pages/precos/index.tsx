@@ -9,10 +9,10 @@ import { useQueryPrecosProduto } from "../../hooks/servicesHooks/useQueryPrecosP
 export default function ProductsList() {
   const [idProduto, setIdProduto] = useState<number>(1000)
 
-  const { isFetching, isLoading } = useQueryPrecosProduto({ idProduto })
+  const { isRefetching, } = useQueryPrecosProduto({ idProduto })
 
   function handleRadioOnChange(value: string) {
-    setIdProduto(parseInt(value))
+    setIdProduto(parseInt(value, 10))
   }
 
 
@@ -42,7 +42,7 @@ export default function ProductsList() {
       <Box flex="1" bg="gray.800" p="8">
         <Flex mb="8" justify="space-between" align="center">
           <Heading size="lg" fontWeight="normal" >Produtos
-            {!isLoading && isFetching && <Spinner ml="4" />}
+            {isRefetching && <Spinner ml="4" />}
           </Heading>
           <CustomModal />
         </Flex>

@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^2.8.8",
     "apexcharts": "^3.35.0",
     "axios": "^0.27.2",
+    "brazilian-values": "^0.10.1",
     "framer-motion": "^6.3.2",
     "jsonwebtoken": "^8.5.1",
     "next": "12.1.5",
@@ -37,6 +38,7 @@
     "cross-env": "^7.0.3",
     "eslint": "8.14.0",
     "eslint-config-next": "12.1.5",
+    "miragejs": "^0.1.45",
     "typescript": "^4.6.3"
   }
 }

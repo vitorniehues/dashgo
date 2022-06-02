@@ -21,6 +21,6 @@ async function getPessoasAutorizadas(): Promise<Pessoa[]> {
 export function useQueryPessoasAutorizadas() {
   return useQuery(['pessoasAutorizadas'], getPessoasAutorizadas, {
     refetchOnWindowFocus: false,
-    staleTime: ms('10s')
+    staleTime: ms('1m')
   })
 }
