@@ -1,4 +1,5 @@
 import { Flex, Icon, Spacer, Text, useDisclosure } from "@chakra-ui/react";
+import { loadavg } from "os";
 import { RiSearchLine } from "react-icons/ri";
 import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 import { useQueryPessoasAutorizadas } from "../../hooks/servicesHooks/useQueryPessoasAutorizadas";
@@ -10,13 +11,29 @@ interface PessoaOperacao {
 }
 
 export function SearchBox() {
-  const { idPessoaOperacao } = useAuthContext()
+  const { idPessoaOperacao, user } = useAuthContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { isSuccess, data: pessoasAutorizadas } = useQueryPessoasAutorizadas()
 
   //TODO verificar o pq o nome da pessoa e recarregado na troca de pagina
 
+  function loadText() {
+    if (user?.role !== 'USUARIO' && !idPessoaOperacao) {
+      return (
+        'Selecione uma pessoa...'
+      )
+    }
+    else return (
+      isSuccess && idPessoaOperacao ? (
+        pessoasAutorizadas
+          .find(e => e.id === idPessoaOperacao)
+          .nome
+      ) : (
+        'Carregando...'
+      )
+    )
+  }
   return (
     <Flex
       as="button"
@@ -34,15 +51,7 @@ export function SearchBox() {
       onClick={onOpen}
     >
       <Text textAlign="left">
-        {
-          isSuccess && idPessoaOperacao ? (
-            pessoasAutorizadas
-              .find(e => e.id === idPessoaOperacao)
-              .nome
-          ) : (
-            'Carregando...'
-          )
-        }
+        {loadText()}
       </Text>
       <Spacer />
 

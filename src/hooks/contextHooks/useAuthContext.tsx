@@ -44,6 +44,7 @@ export function singOut() {
   destroyCookie(undefined, 'app.presidente.refresh-token')
 
   //TODO apagar cache de dados
+  //TODO apagar dados do usuario
 
   Router.push('/')
 }
@@ -63,12 +64,18 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
           const userResponse = response.data
 
           setUser(userResponse)
-          setIdPessoaOperacao(userResponse.pessoasAutorizadas[0])
+
+          if (userResponse.role === 'USUARIO') {
+            setIdPessoaOperacao(userResponse.pessoasAutorizadas[0])
+          }
         })
     }
+
+
   }, [])
 
   async function singIn({ email, password }: SingInCredentials) {
+    console.log('SigIn')
 
     try {
       const response = await authService.post<ILoginResponse>('login', {
@@ -100,7 +107,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
       Router.push('/dashboard')
 
     } catch (error) {
-      console.error(error.response.data.message)
+      throw new Error(error.response.data.message);
     }
   }
 

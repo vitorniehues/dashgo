@@ -29,6 +29,10 @@ export function createApiServer() {
         };
       });
 
+      this.post("/usuario", (_schema, req) => {
+        return req.requestBody
+      });
+
       this.urlPrefix = "http://localhost:3010";
       this.namespace = "pessoa";
 

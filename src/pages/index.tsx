@@ -1,13 +1,14 @@
-import { Box, Button, Flex, Heading, Stack, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 import { Input } from "../components/Form/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useEffect } from "react";
+import { useState } from "react";
 import { useAuthContext } from "../hooks/contextHooks/useAuthContext";
-import { ErrorAlert } from "../components/Alert/ErrorAlert";
 import { parseCookies } from "nookies";
 import Router from "next/router";
+import NextLink from "next/link";
+
 type SingInFormData = {
   email: string,
   password: string
@@ -19,27 +20,25 @@ const singInFormSchema = yup.object().shape({
 })
 
 export default function SingIn() {
-  const { register, handleSubmit, formState } = useForm({
+  const { 'app.presidente.token': token } = parseCookies()
+  const [loginError, setLoginError] = useState('')
+  if (token) {
+    Router.push('/dashboard')
+  }
+
+  const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<SingInFormData>({
     resolver: yupResolver(singInFormSchema)
   })
-  const { errors } = formState
 
   const { singIn } = useAuthContext()
 
 
-  const { isOpen: isVisible } = useDisclosure()
-  let title = 'Erro'
-
-  const handleSingIn: SubmitHandler<SingInFormData> = async (values) => {
-    await singIn(values)
-    //TODO Verificar erro retornado e chamar onOpen para abrir ErrorAlert
+  const handleSingIn: SubmitHandler<SingInFormData> = (values) => {
+    singIn(values)
+      .catch(() => setLoginError('Usuário ou senha inválidos'))
   }
 
-  useEffect(() => {
-    const { 'app.presidente.token': token } = parseCookies()
-    if (token) Router.push('/dashboard')
-  }, [])
-
+  watch(() => setLoginError(''))
 
   return (
     <Flex
@@ -73,22 +72,32 @@ export default function SingIn() {
           <Input
             name="password"
             type="password"
-            label="Password"
+            label="Senha"
             error={errors.password}
             {...register("password")} />
+
         </Stack>
+
+
+        <NextLink href='/password/forgot' passHref>
+          <ChakraLink size="md" mt="2" alignSelf="end" >
+            <Text fontSize="14">Esqueceu a senha?</Text>
+          </ChakraLink>
+        </NextLink>
+
 
         <Button
           type="submit"
           mt="6"
           colorScheme="blue"
           size="lg"
-          isLoading={formState.isSubmitting}
+          isLoading={isSubmitting}
+          name="submitButton"
         >
           Entrar
         </Button>
+        <Text color="red.500" mt="2" alignSelf="center">{loginError}</Text>
 
-        <ErrorAlert my="6" status="error" title={title} isVisible={isVisible} />
       </Flex>
     </Flex>
   )
