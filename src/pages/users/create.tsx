@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Heading, HStack, Icon, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Button, Divider, Flex, Heading, HStack, Icon, SimpleGrid, Stack, useToast } from "@chakra-ui/react";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/SideBar";
@@ -18,6 +18,7 @@ import Router from "next/router";
 import { authService } from "../../services/authService";
 import { RiArrowLeftSLine } from "react-icons/ri";
 import { ControlledInputWithFormat } from "../../components/Form/ControlledInputWithFormat";
+import { BaseLink } from "../../components/BaseLink";
 
 
 
@@ -39,7 +40,7 @@ interface Pessoa extends OptionBase {
   label: string
 }
 
-const roles = [
+const roles: Role[] = [
   { value: 'USUARIO', label: 'Cliente' },
   { value: 'COLABORADOR', label: 'Colaborador' },
   { value: 'ADMINISTRADOR', label: 'Administrador' }
@@ -95,6 +96,7 @@ export default function CreateUser() {
   const { debouncedValue: debouncedFilter } = useDebounce(filter, ms('0.5s'))
   const { isFetching, data: pessoas } = useQueryPessoas(debouncedFilter)
   const { user } = useAuthContext()
+  const toast = useToast()
 
   const isColaborador = user?.role === 'COLABORADOR'
 
@@ -112,8 +114,8 @@ export default function CreateUser() {
   })
 
   useEffect(() => {
-    setValue('role', isColaborador ? roles[0] : null)
-  }, [isColaborador])
+    setValue('role', isColaborador && roles[0])
+  }, [isColaborador, setValue])
 
 
   const { errors, isSubmitting } = formState
@@ -125,25 +127,29 @@ export default function CreateUser() {
     const pessoasAutorizadasArrayInt = pessoasAutorizadasSelecionadas?.map(e => parseInt(e.value))
     const roleValue = role.value
 
-    authService.post('/usuario', {
-      nome: name,
-      email,
-      cpf,
-      pessoasAutorizadas: pessoasAutorizadasArrayInt,
-      role: roleValue,
-    })
-      .then(res => {
-        console.log(res.data)
-        reset(defaultValues)
+    try {
+      await authService.post('/usuario', {
+        nome: name,
+        email,
+        cpf,
+        pessoasAutorizadas: pessoasAutorizadasArrayInt,
+        role: roleValue,
       })
-      .catch(err => {
-        console.log(err)
+      reset(defaultValues)
+    } catch (error) {
+      toast({
+        title: `Erro ao cadastrar usuário:`,
+        status: "error",
+        isClosable: true,
+        description: error?.response?.data.message,
+        position: "top"
       })
+    }
   }
 
-  const handleResetValues = () => [
+  const handleResetValues = () => {
     reset(defaultValues)
-  ]
+  }
 
   return (
     <Box>
@@ -160,10 +166,10 @@ export default function CreateUser() {
           onSubmit={handleSubmit(handleCreateUser)}
         >
 
-          <Heading size="lg" fontWeight="normal" >
-            <Icon as={RiArrowLeftSLine} onClick={() => Router.push('/users')} />
+          <BaseLink href="/users" icon={RiArrowLeftSLine} fontSize="3xl" >
             Criar usuário
-          </Heading>
+          </BaseLink>
+
           <Divider my="6" borderColor="gray.700" />
 
           <Stack spacing="8">

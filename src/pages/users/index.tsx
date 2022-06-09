@@ -1,10 +1,16 @@
 import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
 import Link from "next/link";
+import Router from "next/router";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { BasePage } from "../../components/BasePage";
 import { Pagination } from "../../components/Pagination";
+import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 
 export default function UserList() {
+  const { user } = useAuthContext()
+
+  if (user?.role === 'USUARIO') Router.push('/dashboard')
+
   return (
     <BasePage >
       <Box flex="1" borderRadius={0} bg="gray.800" p="8">

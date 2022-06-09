@@ -1,10 +1,13 @@
-import { Box, Button, Flex, Heading, Stack, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Button, Flex, Heading, Icon, Link, Stack, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Router, { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { RiArrowLeftSLine } from "react-icons/ri";
 import * as yup from "yup"
+import { BaseLink } from "../../components/BaseLink";
 import { Input } from "../../components/Form/Input";
+import { NavLink } from "../../components/SideBar/NavLink";
 import { authService } from "../../services/authService";
 
 type ForgotPasswordFormData = {
@@ -17,23 +20,31 @@ const fotgotPasswordFormSchema = yup.object().shape({
 })
 
 export default function CreatePasswordForm() {
-  const { query } = useRouter()
   const [forgotPasswordError, setForgotPasswordError] = useState('')
+  const [isComplete, setIsComplete] = useState(false)
 
 
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ForgotPasswordFormData>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm<ForgotPasswordFormData>({
     resolver: yupResolver(fotgotPasswordFormSchema)
   })
 
-  const handleCreatePassword: SubmitHandler<ForgotPasswordFormData> = ({ email }) => {
-    console.log(query)
-    authService.post('password/forgot', {
-      email
-    })
-      .then(() => Router.push('/'))
-      .catch(() => setForgotPasswordError('Não foi possível redefinir a senha.'))
+  const handleCreatePassword: SubmitHandler<ForgotPasswordFormData> = async ({ email }) => {
+    try {
+      await authService.post('password/forgot', {
+        email
+      })
+      setIsComplete(true)
+    } catch (error) {
+      setForgotPasswordError('Não foi possível redefinir a senha.')
+    }
   }
+
+  const watchEmail = watch('email')
+
+  useEffect(() => {
+    setForgotPasswordError('')
+  }, [watchEmail])
 
   return (
     <Flex
@@ -45,14 +56,17 @@ export default function CreatePasswordForm() {
       <Flex
         as="form"
         w="100%"
-        maxW={360}
+        maxW={480}
         bg="gray.800"
         p="8"
         borderRadius={8}
         flexDir="column"
         onSubmit={handleSubmit(handleCreatePassword)}
       >
-        <Stack spacing="4">
+        <Stack spacing="6">
+          <BaseLink href="/" icon={RiArrowLeftSLine} fontSize="15">
+            Voltar
+          </BaseLink>
           <Box>
             <Heading textAlign="center">Posto Presidente</Heading>
             <Text fontSize="xl" align="center">Recuperação de senha</Text>
@@ -78,6 +92,13 @@ export default function CreatePasswordForm() {
         </Button>
         <Text color="red.500" mt="2" alignSelf="center">{forgotPasswordError}</Text>
 
+        {
+          isComplete &&
+          <Alert status='success' variant='solid'>
+            <AlertIcon />
+            E-mail enviado com sucesso! Caso não tenha recebido, verifque o spam.
+          </Alert>
+        }
       </Flex>
     </Flex>
   )

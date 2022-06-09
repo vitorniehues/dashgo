@@ -20,8 +20,9 @@ const singInFormSchema = yup.object().shape({
 })
 
 export default function SingIn() {
-  const { 'app.presidente.token': token } = parseCookies()
   const [loginError, setLoginError] = useState('')
+  const { 'app.presidente.token': token } = parseCookies()
+
   if (token) {
     Router.push('/dashboard')
   }
@@ -50,7 +51,7 @@ export default function SingIn() {
       <Flex
         as="form"
         w="100%"
-        maxW={360}
+        maxW={480}
         bg="gray.800"
         p="8"
         borderRadius={8}

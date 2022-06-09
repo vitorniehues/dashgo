@@ -5,6 +5,7 @@ import { setCookie, parseCookies, destroyCookie } from "nookies";
 import ms from "ms";
 import { sigService } from "../../services/sigService";
 import { QueryClientProvider, useQueryClient } from "react-query";
+import { queryClient } from "../../services/queryClient";
 
 interface SingInCredentials {
   email: string;
@@ -28,6 +29,7 @@ interface User {
   cpf: string,
   email: string,
   role: string,
+  nome: string,
   pessoasAutorizadas: number[]
 }
 
@@ -40,11 +42,10 @@ interface ILoginResponse {
 const AuthContext = createContext({} as AuthContextData)
 
 export function singOut() {
-  destroyCookie(undefined, 'app.presidente.token')
-  destroyCookie(undefined, 'app.presidente.refresh-token')
+  destroyCookie(undefined, 'app.presidente.token', { path: '/' })
+  destroyCookie(undefined, 'app.presidente.refresh-token', { path: '/' })
 
-  //TODO apagar cache de dados
-  //TODO apagar dados do usuario
+  queryClient.clear()
 
   Router.push('/')
 }
@@ -75,7 +76,6 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
   }, [])
 
   async function singIn({ email, password }: SingInCredentials) {
-    console.log('SigIn')
 
     try {
       const response = await authService.post<ILoginResponse>('login', {

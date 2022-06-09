@@ -48,7 +48,7 @@ export default function CreatePasswordForm() {
       <Flex
         as="form"
         w="100%"
-        maxW={360}
+        maxW={480}
         bg="gray.800"
         p="8"
         borderRadius={8}

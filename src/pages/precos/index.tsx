@@ -5,11 +5,13 @@ import { useState } from "react";
 import { ProductRadioCardGroup } from "../../components/ProductRadioCard";
 import { ProductPricesTable } from "../../components/ProductPriceTable";
 import { useQueryPrecosProduto } from "../../hooks/servicesHooks/useQueryPrecosProduto";
+import { useAuthContext } from "../../hooks/contextHooks/useAuthContext";
 
 export default function ProductsList() {
   const [idProduto, setIdProduto] = useState<number>(1000)
 
   const { isRefetching, } = useQueryPrecosProduto({ idProduto })
+  const { idPessoaOperacao } = useAuthContext()
 
   function handleRadioOnChange(value: string) {
     setIdProduto(parseInt(value, 10))
@@ -49,7 +51,17 @@ export default function ProductsList() {
         <Flex>
           <ProductRadioCardGroup produtos={produtos} onChange={handleRadioOnChange} />
         </Flex>
-        <ProductPricesTable idProduto={idProduto} />
+        {
+          idPessoaOperacao ? (
+            <ProductPricesTable idProduto={idProduto} />
+          ) : (
+            <Text mt="8"
+              textAlign="center"
+            >
+              Selecione uma pessoa na barra superior para consultar os preços.
+            </Text>
+          )
+        }
       </Box>
     </BasePage >
   )
